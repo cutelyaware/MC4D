@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    <LinearLayout android:id="@+id/puzzle_holder" android:orientation="horizontal"
+        android:layout_weight="1" android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+    </LinearLayout>
+    <TableLayout android:id="@+id/twistors"
+        android:layout_weight="0"
+        android:layout_width="fill_parent" android:layout_height="wrap_content"
+        android:stretchColumns="1">
+        <TableRow>
+            <Button android:id="@+id/L" android:text=""
+                android:visibility="invisible"
+                android:background="@drawable/twist_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <LinearLayout android:gravity="right"> <!-- Wrapped because gravity seems broken on buttons -->
+                <Button android:id="@+id/R" android:text=""
+                    android:visibility="invisible"
+                    android:background="@drawable/twist_right"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </TableRow>
+    </TableLayout>
+
+    <LinearLayout android:orientation="horizontal"
+        android:layout_width="fill_parent" android:layout_weight="0"
+        android:layout_height="wrap_content">
+        <RadioGroup android:id="@+id/modes" android:layout_weight="1.6"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <RadioButton android:id="@+id/twisting" android:checked="false"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Twist" />
+            <RadioButton android:id="@+id/D3" android:checked="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3D Rotate" />
+            <RadioButton android:id="@+id/D4" android:checked="false"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="4D Rotate" />
+        </RadioGroup>
+        <TableLayout android:id="@+id/buttons"
+            android:layout_weight="1"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:stretchColumns="1">
+            <TableRow>
+                <Button android:id="@+id/scramble_1" android:text="Scramble 1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </TableRow>
+            <TableRow>
+                <Button android:id="@+id/scramble_2" android:text="Scramble 2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <Button android:id="@+id/scramble_full" android:text="Scramble Full"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </TableRow>
+            <TableRow>
+                <Button android:id="@+id/scramble_3" android:text="Scramble 3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <Button android:id="@+id/solve" android:text="Solve"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </TableRow>
+        </TableLayout>
+    </LinearLayout>
+</LinearLayout>

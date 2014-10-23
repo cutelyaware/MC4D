@@ -1,0 +1,2 @@
+include ':AndroidUtils'
+include ':MC4D'

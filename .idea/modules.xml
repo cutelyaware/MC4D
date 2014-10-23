@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/AndroidUtils/AndroidUtils.iml" filepath="$PROJECT_DIR$/AndroidUtils/AndroidUtils.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MC4D/App.iml" filepath="$PROJECT_DIR$/MC4D/App.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MC4D.iml" filepath="$PROJECT_DIR$/MC4D.iml" />
+    </modules>
+  </component>
+</project>
+

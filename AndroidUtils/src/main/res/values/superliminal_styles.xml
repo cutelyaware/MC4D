@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+        Base application theme, dependent on API level. This theme is replaced
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+    -->
+    <style name="AppBaseTheme" parent="android:Theme.Light">
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+        -->
+    </style>
+    
+    <!-- Override style.base text color with the Superliminal text color -->
+    <style name="base">
+        <item name="android:textColor">@color/ss_text</item>
+    </style>
+    
+    <style name="SuperliminalTextViewStyle" parent="android:Widget.TextView">
+        <item name="android:textColor">@color/ss_text</item>
+        <item name="android:typeface">serif</item>
+    </style>
+    
+    <style name="SuperliminalLabelTextViewStyle" parent="android:Widget.TextView">
+        <item name="android:textColor">@color/ss_labels</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:typeface">sans</item>
+    </style>
+    
+    <style name="SuperliminalVariableTextViewStyle" parent="android:Widget.TextView">
+        <item name="android:textColor">@color/ss_text_variables</item>
+        <item name="android:typeface">sans</item>
+    </style>
+
+    <!-- Application theme. -->
+    <style name="SuperliminalTheme" parent="AppBaseTheme">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+        <item name="android:textViewStyle">@style/SuperliminalTextViewStyle</item>
+        <item name="android:background">@color/ss_background</item>
+    </style>
+    
+    <style name="SuperliminalButtonStyle" parent="@android:style/Widget.Button">
+        <item name="android:background">@android:drawable/btn_default</item>
+    </style>
+
+</resources>

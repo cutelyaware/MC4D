@@ -1,0 +1,6 @@
+<resources>
+    <color name="ss_text">#ffcc99</color>
+    <color name="ss_text_variables">#99ff99</color>
+    <color name="ss_labels">#ffffff</color>
+    <color name="ss_background">#4d4d4d</color>
+</resources>
