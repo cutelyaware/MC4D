@@ -8,7 +8,7 @@ import java.util.*;
 /**
  * Maintains a sequence of twists, rotates, and marks applied to a MagicCube4D puzzle.
  * Supports undo/redo and macro moves and is able to save and restore from log files.
- * 
+ *
  * <p>DESIGN</p>
  * <li>Twists and rotates are called "moves". Rotates are represented internally as
  * twists that affect all slices but are logically considered a different kind of move.</li>
@@ -88,7 +88,7 @@ public class History {
 			public MagicCube.TwistData nextElement() {
 				HistoryNode n = queue.remove();
 				return new MagicCube.TwistData(n.stickerid, n.dir, n.slicesmask);
-			} 
+			}
 			private Queue<HistoryNode> findTwists() {
 				Queue<HistoryNode> twists = new LinkedList<HistoryNode>();
 				for(HistoryNode n = first; n!=null && n!=current; n=n.next)
@@ -144,7 +144,7 @@ public class History {
     public void deleteLast() {
         deleteNode(last);
     }
-    
+
     public void clear(int newLength) {
     	length = newLength;
         while (first != null)
@@ -583,10 +583,7 @@ public class History {
     //
     public static interface HistoryListener { public void currentChanged(); }
     private Set<HistoryListener> historyListeners = new HashSet<HistoryListener>();
-    public void addHistoryListener(HistoryListener listener) {
-        if(historyListeners.add(listener))
-        	listener.currentChanged(); // perhaps not the best idea?
-    }
+    public void addHistoryListener(HistoryListener listener) { historyListeners.add(listener); }
     public void removeHistoryListener(HistoryListener listener) { if(historyListeners.contains(listener)) historyListeners.remove(listener); }
     protected void fireCurrentChanged() { for(HistoryListener hl : historyListeners) hl.currentChanged(); }
 
@@ -613,7 +610,7 @@ public class History {
 
     /*
      * Reverses both the order of the history moves and their directions.
-     * 
+     *
      * Note: Also kills current, if any, just due to laziness.
      */
     private void reverse()
@@ -648,7 +645,7 @@ public class History {
     }
 //
 //    	//int startCount = this.countMoves(false);
-//    	
+//
 //        if (sweepRotatesForward)
 //        {
 //            Assert(current == null);
@@ -853,7 +850,7 @@ public class History {
 //                    MagicCube.Stickerspec grip = scratchGrip;
 //                    grip.face = face;
 //                    for (grip.id_within_face = 0;
-//                         grip.id_within_face < MagicCube.GRIPS_PER_FACE; // TODO: need way to know how many 
+//                         grip.id_within_face < MagicCube.GRIPS_PER_FACE; // TODO: need way to know how many
 //                         grip.id_within_face++)
 //                    {
 //                        PolygonManager.fillStickerspecFromFaceAndIdAndLength(grip, 3);
@@ -917,7 +914,7 @@ public class History {
 //        //int endCount = this.countMoves(false);
 //        //System.out.println("compressed " + startCount+ " twist sequence to " + endCount + " (" + (startCount - endCount)*100f/startCount + "%)");
 //    } // end compress
-//    
+//
 //
 //    private static void randomPermutation(int perm[])
 //    {
@@ -935,7 +932,7 @@ public class History {
 //        }
 //    }
 //
-//    
+//
 //    public void oldcompress() {
 //        // TODO: perform on the fly, as the cheat-solve is happening, otherwise long wait if the history is long.
 //        HistoryNode node, nodeptr;
@@ -1150,13 +1147,13 @@ public class History {
             System.out.println("before:");
             print(hist);
             OutputStreamWriter osw = new OutputStreamWriter(System.out);
-            
+
             hist.write(osw);
             osw.flush();
             //hist.reverse();
             //hist.write(osw);
             //osw.flush();
-            
+
             FileWriter fw;
             fw = new FileWriter("test.txt");
             hist.write(fw);
@@ -1171,7 +1168,7 @@ public class History {
             System.out.println("after write and read back:");
             hist.write(osw);
             osw.flush();
-            
+
             System.out.println("reversed:");
             hist.reverse();
             print(hist);

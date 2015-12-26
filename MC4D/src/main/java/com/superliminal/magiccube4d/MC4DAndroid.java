@@ -1,11 +1,7 @@
 package com.superliminal.magiccube4d;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.Menu;
@@ -20,58 +16,32 @@ import android.widget.RadioButton;
 
 import com.superliminal.magiccube4d.MagicCube.InputMode;
 import com.superliminal.util.android.DialogUtils;
+import com.superliminal.util.android.EmailUtils;
+import com.superliminal.util.android.Graphics;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PushbackReader;
+import java.io.Writer;
 import java.util.Enumeration;
 import java.util.Random;
+import java.util.Scanner;
 import java.util.Stack;
 
 public class MC4DAndroid extends Activity {
-    private static final int LENGTH = 3;
+    private static final int EDGE_LENGTH = 3;
     private static final int FULLY = -1;
     private PuzzleManager mPuzzleManager;
-    private History mHist = new History(LENGTH);
+    private History mHist = new History(EDGE_LENGTH);
     private MC4DAndroidView view;
     private MediaPlayer mCorrectSound, mWipeSound, mWrongSound, mFanfareSound;
-
-    private enum ScrambleState {
-        NONE, FEW, FULL
-    };
-
+    private enum ScrambleState { NONE, FEW, FULL }
     private ScrambleState mScrambleState = ScrambleState.NONE;
     private boolean mIsScrambling = false;
-    private boolean mHasAccelerometer = false;
-
-    private SensorEventListener mShakeSensor = new SensorEventListener() {
-        private static final double STRONG = 12;
-        private long mLastStrongShake = System.currentTimeMillis();
-
-        @Override
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {}
-
-        @Override
-        public void onSensorChanged(SensorEvent event) {
-            float force = (float) Math.sqrt(Vec_h._NORMSQRD3(event.values));
-            long now = System.currentTimeMillis();
-            long dur = now - mLastStrongShake;
-            if(force > STRONG) {
-                if(dur > 1500)
-                    mLastStrongShake = now;
-                else if(dur > 500) {
-                    if(mHist.atScrambleBoundary()) { // Can't undo past scramble boundary.
-                        playSound(mWrongSound);
-                    }
-                    else {
-                        MagicCube.TwistData toUndo = mHist.undo();
-                        if(toUndo != null) {
-                            view.animate(toUndo, false);
-                            view.invalidate();
-                            playSound(mWipeSound);
-                        }
-                    }
-                }
-            }
-        }
-    };
 
     private void initMode(int id, final InputMode mode) {
         RadioButton rb = (RadioButton) findViewById(id);
@@ -80,8 +50,8 @@ public class MC4DAndroid extends Activity {
             public void onClick(View v) {
                 view.setInputMode(mode);
                 int twistor_visibility = mode == InputMode.TWISTING ? View.VISIBLE : View.INVISIBLE;
-                ((Button) findViewById(R.id.L)).setVisibility(twistor_visibility);
-                ((Button) findViewById(R.id.R)).setVisibility(twistor_visibility);
+                findViewById(R.id.L).setVisibility(twistor_visibility);
+                findViewById(R.id.R).setVisibility(twistor_visibility);
             }
         });
     }
@@ -114,29 +84,27 @@ public class MC4DAndroid extends Activity {
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         //setContentView(R.layout.main); // For debugging only.
         LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT);
-        mPuzzleManager = new PuzzleManager(MagicCube.DEFAULT_PUZZLE, /* MagicCube.DEFAULT_LENGTH */LENGTH, new ProgressView());
+        mPuzzleManager = new PuzzleManager(MagicCube.DEFAULT_PUZZLE, /* MagicCube.DEFAULT_LENGTH */EDGE_LENGTH, new ProgressView());
+        File log_file = new File(getFilesDir(), MagicCube.LOG_FILE);
         view = new MC4DAndroidView(getApplicationContext(), mPuzzleManager, mHist);
+        boolean readOK = readLog(log_file);
         //addContentView(view, params);
         ViewGroup holder = (ViewGroup) findViewById(R.id.puzzle_holder);
-        (holder).addView(view, params);
+        holder.addView(view, params);
         initMode(R.id.D3, InputMode.ROT_3D);
         initMode(R.id.D4, InputMode.ROT_4D);
         initMode(R.id.twisting, InputMode.TWISTING);
         view.setInputMode(InputMode.ROT_3D);
-
         initTwistor(R.id.L, 1);
         initTwistor(R.id.R, -1);
-
         initScrambler(R.id.scramble_1, 1);
         initScrambler(R.id.scramble_2, 2);
         initScrambler(R.id.scramble_3, 3);
         initScrambler(R.id.scramble_full, FULLY);
-
         Button b = (Button) findViewById(R.id.solve);
         b.setOnClickListener(new OnClickListener() {
             @Override
@@ -144,7 +112,6 @@ public class MC4DAndroid extends Activity {
                 solve();
             }
         });
-
         // TODO: Call release() on these resources when finished:
         mCorrectSound = MediaPlayer.create(getApplicationContext(), R.raw.correct);
         mWipeSound = MediaPlayer.create(getApplicationContext(), R.raw.wipe);
@@ -152,20 +119,20 @@ public class MC4DAndroid extends Activity {
         mFanfareSound = MediaPlayer.create(getApplicationContext(), R.raw.fanfare);
         mHist.addHistoryListener(new History.HistoryListener() {
             private boolean adjusting = false;
-
             @Override
             public void currentChanged() {
                 if(adjusting)
                     return; // Ignore messages from self.
                 adjusting = true;
+                writeLog(new File(getFilesDir(), MagicCube.LOG_FILE));
                 if(mPuzzleManager.isSolved()) {
                     if(!(mScrambleState == ScrambleState.NONE || mIsScrambling))
                         if(mScrambleState == ScrambleState.FULL)
                             playSound(mFanfareSound); // Some poor sap solved full puzzle on Android?? Big reward.
                         else
                             playSound(mCorrectSound); // Small reward.
-                    // Reset everything. Note: Won't want to reset history if we ever allow saving log files.
-                    reset();
+                    // Reset puzzle state.
+                    mScrambleState = ScrambleState.NONE;
                 }
                 adjusting = false;
             }
@@ -173,6 +140,7 @@ public class MC4DAndroid extends Activity {
     }
 
 //// Shake sensor UI doesn't work all that good so just don't use it.
+//private boolean mHasAccelerometer = false;
 //    @Override
 //    protected void onResume() {
 //        super.onResume();
@@ -197,15 +165,15 @@ public class MC4DAndroid extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-//        inflater.inflate(R.menu.scramble1, menu);
-//        inflater.inflate(R.menu.scramble2, menu);
-//        inflater.inflate(R.menu.scramble3, menu);
-//        inflater.inflate(R.menu.full, menu);
-//        inflater.inflate(R.menu.solve, menu);
+        inflater.inflate(R.menu.scramble1, menu);
+        inflater.inflate(R.menu.scramble2, menu);
+        inflater.inflate(R.menu.scramble3, menu);
+        inflater.inflate(R.menu.full, menu);
+        inflater.inflate(R.menu.solve, menu);
+        inflater.inflate(R.menu.send, menu);
         inflater.inflate(R.menu.about, menu);
         return true;
     }
-
 
     /*
      * (non-Javadoc)
@@ -222,7 +190,6 @@ public class MC4DAndroid extends Activity {
                 } catch(NameNotFoundException e) {
                     e.printStackTrace();
                 }
-                AlertDialog.Builder ab = new AlertDialog.Builder(MC4DAndroid.this);
                 String html =
                     "<b><big>" + appNameStr + "</big><br>Copyright 2010 by Melinda Green <br>Superliminal Software</b><br>" +
                         "<hr width=\"100%\" align=\"center\" size=\"1\"> <br>" +
@@ -230,7 +197,6 @@ public class MC4DAndroid extends Activity {
                         "from Superliminal.com. It lets you practice solving slightly randomized puzzles. " +
                         "The hyperstickers (small cubes) are also twisting control axes. " +
                         "Highlight one using the green pointer and click the left or right twist buttons to twist that face. " +
-                        (mHasAccelerometer ? "Shake to undo your last twist. " : "") +
                         "<br><br>Send all questions and comments to <a href=\"mailto:feedback@superliminal.com\">feedback@superliminal.com</a>";
                 DialogUtils.showHTMLDialog(this, html);
                 break;
@@ -248,6 +214,9 @@ public class MC4DAndroid extends Activity {
                 break;
             case R.id.item06:
                 solve();
+                break;
+            case R.id.item07:
+                sendLog(new File(getFilesDir(), MagicCube.LOG_FILE));
                 break;
             default:
                 break;
@@ -267,14 +236,12 @@ public class MC4DAndroid extends Activity {
         }
     }
 
-
     private void reset() {
         mScrambleState = ScrambleState.NONE;
         mHist.clear();
         mPuzzleManager.resetPuzzleStateNoEvent();
         view.invalidate();
     }
-
 
     private void scramble(int scramblechenfrengensen) {
         mIsScrambling = true;
@@ -323,4 +290,134 @@ public class MC4DAndroid extends Activity {
         mScrambleState = scramblechenfrengensen == -1 ? ScrambleState.FULL : ScrambleState.FEW;
         mIsScrambling = false;
     } // end scramble
+
+    /*
+     * Format:
+     * 0 - Magic Number
+     * 1 - File Version
+     * 2 - Scramble State
+     * 3 - Twist Count
+     * 4 - Schlafli Product
+     * 5 - Edge Length
+     */
+    private void writeLog(File logfile) {
+        String sep = System.getProperty("line.separator");
+        int scrambleStateInt = mScrambleState == ScrambleState.FULL ? 2 : mScrambleState == ScrambleState.FEW ? 1 : 0;
+        try {
+            Writer writer = new FileWriter(logfile);
+            writer.write(
+                    MagicCube.MAGIC_NUMBER + " " +
+                            MagicCube.LOG_FILE_VERSION + " " +
+                            scrambleStateInt + " " +
+                            mHist.countTwists() + " " +
+                            mPuzzleManager.puzzleDescription.getSchlafliProduct() + " " +
+                            mPuzzleManager.getPrettyLength());
+            writer.write(sep);
+            view.getRotations().write(writer);
+            //writer.write(sep + puzzle.toString());
+            writer.write("*" + sep);
+            mHist.write(writer);
+            writer.close();
+            String filepath = logfile.getAbsolutePath();
+            //PropertyManager.userprefs.setProperty("logfile", filepath);
+            //setTitle(MagicCube.TITLE + " - " + logfile.getName());
+        } catch(IOException ioe) {
+            ioe.printStackTrace();
+        }
+    } // end writeLog()
+
+    private boolean readLog(File logfile) {
+        if( ! logfile.exists())
+            return false;
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(logfile));
+            String firstlineStr = reader.readLine();
+            if(firstlineStr == null)
+                throw new IOException("Empty log file.");
+            String firstline[] = firstlineStr.split(" ");
+            if(firstline.length != 6 || !MagicCube.MAGIC_NUMBER.equals(firstline[0]))
+                throw new IOException("Unexpected log file format.");
+            int readversion = Integer.parseInt(firstline[1]);
+            if(readversion != MagicCube.LOG_FILE_VERSION) {
+                return false;
+            }
+            int state = Integer.parseInt(firstline[2]);
+            mScrambleState = state == 2 ? ScrambleState.FULL : state == 1 ? ScrambleState.FEW : ScrambleState.NONE;
+            int numTwists = Integer.parseInt(firstline[3]);
+            String schlafli = firstline[4];
+            double initialLength = Double.parseDouble(firstline[5]);
+            mPuzzleManager.initPuzzle(schlafli, "" + initialLength,  new ProgressView(), new Graphics.Label(), false);
+            int iLength = (int) Math.round(initialLength);
+            view.getRotations().read(reader);
+            String title = MagicCube.TITLE;
+            for(int c = reader.read(); !(c == '*' || c == -1); c = reader.read())
+                ; // read past state data
+            if(mHist.read(new PushbackReader(reader))) {
+                title += " - " + logfile.getName();
+                for(Enumeration<MagicCube.TwistData> moves = mHist.moves(); moves.hasMoreElements();) {
+                    MagicCube.TwistData move = moves.nextElement();
+                    if(move.grip.id_within_puzzle == -1) {
+                        System.err.println("Bad move in MC4DAndroid.initPuzzle: " + move.grip.id_within_puzzle);
+                        return false;
+                    }
+                    mPuzzleManager.puzzleDescription.applyTwistToState(
+                            mPuzzleManager.puzzleState,
+                            move.grip.id_within_puzzle,
+                            move.direction,
+                            move.slicemask);
+                }
+            }
+            else
+                System.out.println("Error reading puzzle history");
+            //setTitle(title);
+        } catch(Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    } // end readLog()
+
+    private boolean sendLog(File logfile) {
+        if (!logfile.exists())
+            return false;
+        String text = "";
+        try {
+            text = new Scanner(logfile).useDelimiter("\\A").next();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        EmailUtils.sendEmail(null, "MagicCube4D log file", text, this);
+        return true;
+    }
+
+//    private SensorEventListener mShakeSensor = new SensorEventListener() {
+//        private static final double STRONG = 12;
+//        private long mLastStrongShake = System.currentTimeMillis();
+//        @Override
+//        public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+//        @Override
+//        public void onSensorChanged(SensorEvent event) {
+//            float force = (float) Math.sqrt(Vec_h._NORMSQRD3(event.values));
+//            long now = System.currentTimeMillis();
+//            long dur = now - mLastStrongShake;
+//            if(force > STRONG) {
+//                if(dur > 1500)
+//                    mLastStrongShake = now;
+//                else if(dur > 500) {
+//                    if(mHist.atScrambleBoundary()) { // Can't undo past scramble boundary.
+//                        playSound(mWrongSound);
+//                    }
+//                    else {
+//                        MagicCube.TwistData toUndo = mHist.undo();
+//                        if(toUndo != null) {
+//                            view.animate(toUndo, false);
+//                            view.invalidate();
+//                            playSound(mWipeSound);
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    };
+
 }

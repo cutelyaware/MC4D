@@ -18,7 +18,7 @@ public class EmailUtils {
     public static void sendEmail(String to, String subject, String body, Context cxt) {
         final Intent sendIntent = new Intent(android.content.Intent.ACTION_SEND);
         sendIntent.setType("plain/text");
-        sendIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{to});
+        sendIntent.putExtra(android.content.Intent.EXTRA_EMAIL, to == null ? null : new String[]{to});
         sendIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, subject);
         sendIntent.putExtra(android.content.Intent.EXTRA_TEXT, body);
         cxt.startActivity(Intent.createChooser(sendIntent, "Send mail..."));
@@ -90,7 +90,7 @@ public class EmailUtils {
 
     /**
      * Base implementation of contacts search.
-     * 
+     *
      * @return A managed cursor of contacts for the given activity and optional String prefix.
      */
     public static Cursor buildFilteredCursor(Activity activity, String prefix, String dataKind, Uri uri) {

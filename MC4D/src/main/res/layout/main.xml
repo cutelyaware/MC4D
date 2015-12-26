@@ -47,24 +47,25 @@
                 android:text="4D Rotate" />
         </RadioGroup>
         <TableLayout android:id="@+id/buttons"
+            android:visibility="gone"
             android:layout_weight="1"
             android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:stretchColumns="1">
             <TableRow>
-                <Button android:id="@+id/scramble_1" android:text="Scramble 1"
+                <Button android:id="@+id/scramble_1" android:text="Scram 1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </TableRow>
             <TableRow>
-                <Button android:id="@+id/scramble_2" android:text="Scramble 2"
+                <Button android:id="@+id/scramble_2" android:text="Scram 2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
-                <Button android:id="@+id/scramble_full" android:text="Scramble Full"
+                <Button android:id="@+id/scramble_full" android:text="Scram Full"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </TableRow>
             <TableRow>
-                <Button android:id="@+id/scramble_3" android:text="Scramble 3"
+                <Button android:id="@+id/scramble_3" android:text="Scram 3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
                 <Button android:id="@+id/solve" android:text="Solve"

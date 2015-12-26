@@ -3,8 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/AndroidUtils/AndroidUtils.iml" filepath="$PROJECT_DIR$/AndroidUtils/AndroidUtils.iml" />
-      <module fileurl="file://$PROJECT_DIR$/MC4D/App.iml" filepath="$PROJECT_DIR$/MC4D/App.iml" />
       <module fileurl="file://$PROJECT_DIR$/MC4D.iml" filepath="$PROJECT_DIR$/MC4D.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MC4D/MC4D-MC4D.iml" filepath="$PROJECT_DIR$/MC4D/MC4D-MC4D.iml" />
     </modules>
   </component>
 </project>
