@@ -81,7 +81,7 @@ public class SVG {
         }
         PictureDrawable pd = svg.createPictureDrawable(scale);
         iv.setImageDrawable(pd);
-        iv.setColorFilter(context.getResources().getColor(tintColorID), PorterDuff.Mode.SRC_ATOP);
+        iv.setColorFilter(context.getResources().getColor(tintColorID, context.getTheme()), PorterDuff.Mode.SRC_ATOP);
     }
     
     public static void tintImage(Context context, int svgID, ImageView iv) {

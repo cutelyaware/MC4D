@@ -4909,7 +4909,7 @@ public class NdSolve {
 
 			// now call the version where we know n and d.
 			// XXX need to do more sanity checking on colorCounts!
-			return new Object[] { new Integer(n), new Integer(d),
+			return new Object[] { n, d,
 					puzzleFromString(n, d, s, debugLevel) };
 		} // puzzleFromString
 
@@ -5006,7 +5006,7 @@ public class NdSolve {
 					System.out.println("    n = " + n);
 				if (debugLevel >= 2)
 					System.out.println("    d = " + d);
-				return new Object[] { new Integer(n), new Integer(d),
+				return new Object[] { n, d,
 						puzzleFromString(n, d, sb.toString(), debugLevel) };
 			}
 		} // puzzleFromReader
@@ -6198,7 +6198,7 @@ class Arrays {
 	// all the time...
 	//
 	public static int[] insert(int array[], int index, int itemToInsert) {
-		return (int[]) insert(array, index, (Object) new Integer(itemToInsert));
+		return (int[]) insert(array, index, (Object) itemToInsert);
 	}
 
 	public static int[][] insert(int array[][], int index, int itemToInsert[]) {
@@ -6215,7 +6215,7 @@ class Arrays {
 	}
 
 	public static int[] append(int array[], int itemToAppend) {
-		return (int[]) append(array, (Object) new Integer(itemToAppend));
+		return (int[]) append(array, (Object) itemToAppend);
 	}
 
 	public static int[][] append(int array[][], int itemToAppend[]) {

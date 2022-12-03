@@ -1,6 +1,7 @@
 package com.superliminal.util.android;
 
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -99,7 +100,11 @@ public class GUITaskQueue {
     postMessage(HANDLE_EXCEPTION, new GUITaskWithSomething<Throwable>(task, t));
   }
 
-  private class MyHandler extends Handler {
+  private static class MyHandler extends Handler {
+    MyHandler() {
+      super(Looper.getMainLooper());
+    }
+
     @Override
     public void handleMessage(Message msg) {
       switch (msg.what) {

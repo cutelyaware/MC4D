@@ -1,6 +1,7 @@
 package com.superliminal.magiccube4d;
 
 import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -87,7 +88,7 @@ public class MC4DAndroid extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         //setContentView(R.layout.main); // For debugging only.
-        LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT);
+        LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         mPuzzleManager = new PuzzleManager(MagicCube.DEFAULT_PUZZLE, /* MagicCube.DEFAULT_LENGTH */EDGE_LENGTH, new ProgressView());
         File log_file = new File(getFilesDir(), MagicCube.LOG_FILE);
         view = new MC4DAndroidView(getApplicationContext(), mPuzzleManager, mHist);
@@ -186,7 +187,7 @@ public class MC4DAndroid extends Activity {
             case R.id.item01:
                 String appNameStr = getString(R.string.app_name) + " ";
                 try {
-                    appNameStr += "v" + getPackageManager().getPackageInfo(getApplicationContext().getPackageName(), 0).versionName + " ";
+                    appNameStr += "v" + getPackageManager().getPackageInfo(getApplicationContext().getPackageName(), PackageManager.PackageInfoFlags.of(0)).versionName + " ";
                 } catch(NameNotFoundException e) {
                     e.printStackTrace();
                 }
