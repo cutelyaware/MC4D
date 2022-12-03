@@ -8,7 +8,6 @@ import android.text.Html;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
-import android.view.textclassifier.TextClassifier;
 import android.widget.TextView;
 
 public class DialogUtils {
