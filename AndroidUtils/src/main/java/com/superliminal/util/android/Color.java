@@ -49,7 +49,13 @@ public class Color {
 	}
 	
 	public static Color decode(String str) {
-		System.out.println("Color.decode() not yet implemented.");
+		if (str.startsWith("#")) {
+			// parse hex
+			int r = Integer.parseInt(str.substring(1, 3), 16);
+			int g = Integer.parseInt(str.substring(3, 5), 16);
+			int b = Integer.parseInt(str.substring(5, 7), 16);
+			return new Color(r / 256.0f, g / 256.0f, b / 256.0f);
+		}
 		return null;
 	}
 
