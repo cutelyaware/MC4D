@@ -152,8 +152,8 @@ public class MoveResizeActivityUtils {
             {
                 addView(child,
                     new RelativeLayout.LayoutParams(
-                        RelativeLayout.LayoutParams.FILL_PARENT,
-                        RelativeLayout.LayoutParams.FILL_PARENT));
+                        RelativeLayout.LayoutParams.MATCH_PARENT,
+                        RelativeLayout.LayoutParams.MATCH_PARENT));
                 addView(new Button(context) {
                     @Override
                     protected void onDraw(Canvas canvas) {

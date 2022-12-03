@@ -61,7 +61,7 @@ public class MC4DAndroidView extends View {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 // dumpMotionEvent(event);
-                int pid = event.getAction() >> MotionEvent.ACTION_POINTER_ID_SHIFT;
+                int pid = event.getAction() >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
                 long now = event.getEventTime();
                 switch(event.getAction() & MotionEvent.ACTION_MASK) {
                     case MotionEvent.ACTION_DOWN: // The first pointer down out of however many.
@@ -217,7 +217,7 @@ public class MC4DAndroidView extends View {
         if(actionCode == MotionEvent.ACTION_POINTER_DOWN
                 || actionCode == MotionEvent.ACTION_POINTER_UP) {
             sb.append("(pid ").append(
-                    action >> MotionEvent.ACTION_POINTER_ID_SHIFT);
+                    action >> MotionEvent.ACTION_POINTER_INDEX_SHIFT);
             sb.append(")");
         }
         sb.append("[");

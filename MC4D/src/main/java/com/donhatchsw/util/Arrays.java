@@ -495,7 +495,7 @@ public final class Arrays
     {
         // XXX this is of questionable merit
         if (startDepth == 0)
-            return new Integer(arrayLength(array, furtherDepth));
+            return arrayLength(array, furtherDepth);
 
         int n = java.lang.reflect.Array.getLength(array);
         if (startDepth == 1)
@@ -770,7 +770,7 @@ public final class Arrays
     } // fill
     public static int[] fill(int n, int item)
     {
-        return (int[])fill(n, new Integer(item));
+        return (int[])fill(n, Integer.valueOf(item));
     }
 
     public static void reverse(int to[], int from[])
@@ -1250,13 +1250,13 @@ public final class Arrays
                      && s.startsWith("true", i))
                     {
                         i += 4;
-                        obj = new Boolean(true);
+                        obj = Boolean.TRUE;
                     }
                     else if (end-i >= 5
                           && s.startsWith("false", i))
                     {
                         i += 5;
-                        obj = new Boolean(false);
+                        obj = Boolean.FALSE;
                     }
                     else
                     {
@@ -1314,17 +1314,17 @@ public final class Arrays
                     else
                     {
                         if (wrapperClass == Byte.class)
-                            obj = new Byte(number.byteValue());
+                            obj = number.byteValue();
                         else if (wrapperClass == Double.class)
-                            obj = new Double(number.doubleValue());
+                            obj = number.doubleValue();
                         else if (wrapperClass == Float.class)
-                            obj = new Float(number.floatValue());
+                            obj = number.floatValue();
                         else if (wrapperClass == Integer.class)
-                            obj = new Integer(number.intValue());
+                            obj = number.intValue();
                         else if (wrapperClass == Long.class)
-                            obj = new Long(number.longValue());
+                            obj = number.longValue();
                         else if (wrapperClass == Short.class)
-                            obj = new Short(number.shortValue());
+                            obj = number.shortValue();
                         else
                             throw new java.text.ParseException("Don't know how to parse class "+clazz.getName()+"",startPos);
                     }
@@ -1465,10 +1465,10 @@ public final class Arrays
     {
         if (true)
         {
-            Integer thisZero = new Integer(0);
-            Integer thatZero = new Integer(0);
-            Integer thisOne = new Integer(1);
-            Integer thatOne = new Integer(1);
+            Integer thisZero = 0;
+            Integer thatZero = 0;
+            Integer thisOne = 1;
+            Integer thatOne = 1;
             System.out.println("thisZero == thatZero" + " = " + (thisZero == thatZero));
             System.out.println("thisZero == thatOne" + " = " + (thisZero == thatOne));
             System.out.println("thisZero.equals(thatZero)" + " = " + (thisZero.equals(thatZero)));
