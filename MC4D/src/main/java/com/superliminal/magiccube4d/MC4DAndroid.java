@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -187,7 +188,13 @@ public class MC4DAndroid extends Activity {
             case R.id.item01:
                 String appNameStr = getString(R.string.app_name) + " ";
                 try {
-                    appNameStr += "v" + getPackageManager().getPackageInfo(getApplicationContext().getPackageName(), PackageManager.PackageInfoFlags.of(0)).versionName + " ";
+                    String versionName;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        versionName = getPackageManager().getPackageInfo(getApplicationContext().getPackageName(), PackageManager.PackageInfoFlags.of(0)).versionName;
+                    } else {
+                        versionName = getPackageManager().getPackageInfo(getApplicationContext().getPackageName(), 0).versionName;
+                    }
+                    appNameStr += "v" + versionName + " ";
                 } catch(NameNotFoundException e) {
                     e.printStackTrace();
                 }
