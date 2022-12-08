@@ -23,8 +23,8 @@ import java.util.Vector;
 public class MC4DAndroidView extends View {
     private boolean DEBUGGING = false;
     private final float PLANCHETTE_OFFSET_Y = 100;
-    private final float PLANCHETTE_WIDTH = 50;
-    private final float PLANCHETTE_HEIGHT = 70;
+    private final float PLANCHETTE_WIDTH = 75;
+    private final float PLANCHETTE_HEIGHT = 105;
     private int stickerUnderPlanchette = -1;
 
     private PuzzleManager puzzleManager;
