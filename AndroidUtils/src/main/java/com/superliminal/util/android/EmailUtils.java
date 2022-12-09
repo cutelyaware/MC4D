@@ -87,34 +87,4 @@ public class EmailUtils {
                 cursor.addRow(new Object[]{"" + row++, string});
         return cursor;
     }
-
-    /**
-     * Base implementation of contacts search.
-     *
-     * @return A managed cursor of contacts for the given activity and optional String prefix.
-     */
-    public static Cursor buildFilteredCursor(Activity activity, String prefix, String dataKind, Uri uri) {
-        String my_sort_order = null;
-        String my_selection = ContactsContract.Contacts.IN_VISIBLE_GROUP + " = '1'";
-        if(prefix != null)
-            my_selection += " AND " + ContactsContract.Contacts.DISPLAY_NAME + " LIKE '" + prefix + "%'";
-        String[] eproj = new String[]{
-            ContactsContract.Contacts._ID,
-            ContactsContract.Contacts.DISPLAY_NAME,
-            dataKind};
-        return activity.managedQuery(uri, eproj, my_selection, null, my_sort_order);
-    }
-
-    public static Cursor buildFilteredEmailCursor(Activity activity, String prefix) {
-        Uri email_uri = android.provider.ContactsContract.CommonDataKinds.Email.CONTENT_URI;
-        String email_kind = ContactsContract.CommonDataKinds.Email.DATA;
-        return buildFilteredCursor(activity, prefix, email_kind, email_uri);
-    }
-
-    public static Cursor buildFilteredPhoneCursor(Activity activity, String prefix) {
-        Uri phone_uri = android.provider.ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
-        String phone_kind = ContactsContract.CommonDataKinds.Phone.DATA;
-        return buildFilteredCursor(activity, prefix, phone_kind, phone_uri);
-    }
-
 }

@@ -1,5 +1,7 @@
 package com.superliminal.util.android;
 
+import static android.text.Html.FROM_HTML_MODE_LEGACY;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.text.Html;
@@ -13,8 +15,8 @@ public class DialogUtils {
     // From workaround at http://stackoverflow.com/questions/1997328/android-clickable-hyperlinks-in-alertdialog
     public static void showHTMLDialog(Context context, String html) {
         // Linkify the message
-        final SpannableString s = new SpannableString(Html.fromHtml(html));
-        Linkify.addLinks(s, Linkify.ALL);
+        final SpannableString s = new SpannableString(Html.fromHtml(html, FROM_HTML_MODE_LEGACY));
+        Linkify.addLinks(s, Linkify.WEB_URLS | Linkify.EMAIL_ADDRESSES);
         final AlertDialog d = new AlertDialog.Builder(context)
                 .setPositiveButton(android.R.string.ok, null)
                 //.setIcon(R.drawable.icon)

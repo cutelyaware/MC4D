@@ -2,6 +2,7 @@ package com.superliminal.magiccube4d;
 
 import android.content.Context;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,14 +22,14 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 public class MC4DAndroidView extends View {
-    private boolean DEBUGGING = false;
+    private final boolean DEBUGGING = false;
     private final float PLANCHETTE_OFFSET_Y = 100;
-    private final float PLANCHETTE_WIDTH = 50;
-    private final float PLANCHETTE_HEIGHT = 70;
+    private final float PLANCHETTE_WIDTH = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, getResources().getDisplayMetrics());
+    private final float PLANCHETTE_HEIGHT = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 70, getResources().getDisplayMetrics());;
     private int stickerUnderPlanchette = -1;
 
-    private PuzzleManager puzzleManager;
-    private RotationHandler rotationHandler = new RotationHandler(MagicCube.NICE_VIEW);
+    private final PuzzleManager puzzleManager;
+    private final RotationHandler rotationHandler = new RotationHandler(MagicCube.NICE_VIEW);
     public RotationHandler getRotations() { return rotationHandler; }
     private float[] lastDrag0, lastDrag1; // Most recent position of fingers. Non-null == dragging.
     private float[] lastDragSave = new float[2]; // never null
@@ -38,7 +39,7 @@ public class MC4DAndroidView extends View {
     private int xOff, yOff;
     private float polys2pixelsSF = .01f; // screen transform data
     private int mY = 100;
-    private AnimationQueue animationQueue;
+    private final AnimationQueue animationQueue;
 
     public MC4DAndroidView(final Context context, PuzzleManager puzMan, History hist) {
         super(context);
@@ -61,7 +62,7 @@ public class MC4DAndroidView extends View {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 // dumpMotionEvent(event);
-                int pid = event.getAction() >> MotionEvent.ACTION_POINTER_ID_SHIFT;
+                int pid = event.getAction() >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
                 long now = event.getEventTime();
                 switch(event.getAction() & MotionEvent.ACTION_MASK) {
                     case MotionEvent.ACTION_DOWN: // The first pointer down out of however many.
@@ -217,7 +218,7 @@ public class MC4DAndroidView extends View {
         if(actionCode == MotionEvent.ACTION_POINTER_DOWN
                 || actionCode == MotionEvent.ACTION_POINTER_UP) {
             sb.append("(pid ").append(
-                    action >> MotionEvent.ACTION_POINTER_ID_SHIFT);
+                    action >> MotionEvent.ACTION_POINTER_INDEX_SHIFT);
             sb.append(")");
         }
         sb.append("[");
@@ -234,16 +235,16 @@ public class MC4DAndroidView extends View {
         Log.d("Touch", str);
     }
 
+    private final Font mDbgFont = new Font("Arial", Font.PLAIN, 10);
     private int mFrameNum = 0;
     private long mLastFrameMillis = 0;
-    private Font mDbgFont = new Font("Arial", Font.PLAIN, 10);
 
     @Override
     protected void onDraw(android.graphics.Canvas canvas) {
         super.onDraw(canvas);
         if(mFrameNum++ == 0)
             updateViewFactors();
-        Graphics g = new Graphics(canvas);
+        final Graphics g = new Graphics(canvas);
 
         // Simple test+
         // int x = getWidth() / 2;

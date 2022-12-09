@@ -137,25 +137,6 @@ public class StaticUtils {
         return (new SimpleDateFormat("yyyyMMdd_HHmmss")).format(new Date());
     }
 
-    /**
-     * Converts the given URI to its direct file system path.
-     * From http://www.androidsnippets.com/get-file-path-of-gallery-image.
-     * Modified to also handle non-image types.
-     */
-    public static String getRealPathFromURI(Uri contentUri, Activity act) {
-        String[] proj = {MediaStore.Images.Media.DATA};
-        Cursor cursor = act.managedQuery(contentUri,
-             proj, // Which columns to return
-             null, // WHERE clause; which rows to return (all rows)
-             null, // WHERE clause selection arguments (none)
-             null); // Order-by clause (ascending by name)
-        if(cursor == null)
-            return contentUri.getPath();
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        return cursor.getString(column_index);
-    }
-
 //    public static class TextWatcherStub implements TextWatcher {
 //        @Override
 //        public void onTextChanged(CharSequence s, int start, int before, int count) {}

@@ -109,9 +109,18 @@ public class ColorUtils {
         
         // HACK!
         if(ncolors == 8) {
+            // Use HSC colours
+            // Cell order: I D F L R B U O
             return new Color[] {
-                    Color.blue, Color.cyan, new Color(.5f,.4f,.2f), Color.red,
-                    Color.yellow, new Color(.5f, 0, 1), Color.rose, Color.brown};
+                    Color.decode("#8822CC"), // purple
+                    Color.decode("#88EE66"), // light green
+                    Color.decode("#FFFFFF"), // white
+                    Color.decode("#FF9922"), // orange
+                    Color.decode("#CC3333"),  // red
+                    Color.decode("#FFFF00"), // yellow
+                    Color.decode("#33AAFF"), // light blue
+                    Color.decode("#FF66FF")  // pink
+            };
         }
         
         float[][] yuv = new float[ncolors][3];
