@@ -1,8 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, MC4DAndroid!</string>
     <string name="app_name">Magic Cube 4D</string>
     <string name="twist">" Twist"</string>
     <string name="_3d_rotate">" 3D Rotate"</string>
     <string name="_4d_rotate">" 4D Rotate"</string>
+    <string name="about">About…</string>
+    <string name="scramble_fully">Full Scramble</string>
+    <string name="scramble_1">1 Twist</string>
+    <string name="scramble_2">2 Twists</string>
+    <string name="scramble_3">3 Twists</string>
+    <string name="send_log">Send Log</string>
+    <string name="solve">Solve</string>
+    <string name="scramble">Scramble</string>
+    <string name="_2_4">2^4</string>
+    <string name="_3_4">3^4</string>
+    <string name="puzzle">Puzzle</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="change_puzzle_warning">The puzzle state will be cleared if you change the puzzle! Proceed to change puzzle?</string>
 </resources>

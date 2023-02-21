@@ -1,6 +1,7 @@
 package com.superliminal.magiccube4d;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.media.MediaPlayer;
@@ -93,7 +94,7 @@ public class MC4DAndroid extends Activity {
         mPuzzleManager = new PuzzleManager(MagicCube.DEFAULT_PUZZLE, /* MagicCube.DEFAULT_LENGTH */EDGE_LENGTH, new ProgressView());
         File log_file = new File(getFilesDir(), MagicCube.LOG_FILE);
         view = new MC4DAndroidView(getApplicationContext(), mPuzzleManager, mHist);
-        boolean readOK = readLog(log_file);
+        boolean readOK = readAndApplyLog(log_file);
         //addContentView(view, params);
         ViewGroup holder = (ViewGroup) findViewById(R.id.puzzle_holder);
         holder.addView(view, params);
@@ -167,13 +168,7 @@ public class MC4DAndroid extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.scramble1, menu);
-        inflater.inflate(R.menu.scramble2, menu);
-        inflater.inflate(R.menu.scramble3, menu);
-        inflater.inflate(R.menu.full, menu);
-        inflater.inflate(R.menu.solve, menu);
-        inflater.inflate(R.menu.send, menu);
-        inflater.inflate(R.menu.about, menu);
+        inflater.inflate(R.menu.main, menu);
         return true;
     }
 
@@ -184,57 +179,68 @@ public class MC4DAndroid extends Activity {
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
-            case R.id.item01:
-                String appNameStr = getString(R.string.app_name) + " ";
-                try {
-                    String versionName;
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        versionName = getPackageManager().getPackageInfo(getApplicationContext().getPackageName(), PackageManager.PackageInfoFlags.of(0)).versionName;
-                    } else {
-                        versionName = getPackageManager().getPackageInfo(getApplicationContext().getPackageName(), 0).versionName;
-                    }
-                    appNameStr += "v" + versionName + " ";
-                } catch(NameNotFoundException e) {
-                    e.printStackTrace();
+        final int itemId = item.getItemId();
+        if(itemId == R.id.itemAbout) {
+            String appNameStr = getString(R.string.app_name) + " ";
+            try {
+                String versionName;
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    versionName = getPackageManager().getPackageInfo(getApplicationContext().getPackageName(), PackageManager.PackageInfoFlags.of(0)).versionName;
+                } else {
+                    versionName = getPackageManager().getPackageInfo(getApplicationContext().getPackageName(), 0).versionName;
                 }
-                String html =
+                appNameStr += "v" + versionName + " ";
+            } catch(NameNotFoundException e) {
+                e.printStackTrace();
+            }
+            String html =
                     "<b><big>" + appNameStr + "</big><br>Copyright 2010 by Melinda Green <br>Superliminal Software</b><br>" +
-                        "<hr width=\"100%\" align=\"center\" size=\"1\"> <br>" +
-                        "This version of Magic Cube 4D is a mobile version of the full-featured desktop application " +
-                        "from Superliminal.com. It lets you practice solving slightly randomized puzzles. " +
-                        "The hyperstickers (small cubes) are also twisting control axes. " +
-                        "Highlight one using the green pointer and click the left or right twist buttons to twist that face. " +
-                        "<br><br>Send all questions and comments to <a href=\"mailto:feedback@superliminal.com\">feedback@superliminal.com</a>";
-                DialogUtils.showHTMLDialog(this, html);
-                break;
-            case R.id.item02:
-                scramble(1);
-                break;
-            case R.id.item03:
-                scramble(2);
-                break;
-            case R.id.item04:
-                scramble(3);
-                break;
-            case R.id.item05:
-                scramble(FULLY);
-                break;
-            case R.id.item06:
-                solve();
-                break;
-            case R.id.item07:
-                sendLog(new File(getFilesDir(), MagicCube.LOG_FILE));
-                break;
-            default:
-                break;
+                            "<hr width=\"100%\" align=\"center\" size=\"1\"> <br>" +
+                            "This version of Magic Cube 4D is a mobile version of the full-featured desktop application " +
+                            "from Superliminal.com. It lets you practice solving slightly randomized puzzles. " +
+                            "The hyperstickers (small cubes) are also twisting control axes. " +
+                            "Highlight one using the green pointer and click the left or right twist buttons to twist that face. " +
+                            "<br><br>Send all questions and comments to <a href=\"mailto:feedback@superliminal.com\">feedback@superliminal.com</a>";
+            DialogUtils.showHTMLDialog(this, html);
+        } else if(itemId == R.id.itemScramble1) {
+            scramble(1);
+        } else if(itemId == R.id.itemScramble2) {
+            scramble(2);
+        } else if(itemId == R.id.itemScramble3) {
+            scramble(3);
+        } else if(itemId == R.id.itemScrambleFull) {
+            scramble(FULLY);
+        } else if(itemId == R.id.itemSolve) {
+            solve();
+        } else if(itemId == R.id.itemSendLog) {
+            sendLog(new File(getFilesDir(), MagicCube.LOG_FILE));
+        } else if(itemId == R.id.itemPuzzle2222) {
+            changePuzzle(2);
+        } else if(itemId == R.id.itemPuzzle3333) {
+            changePuzzle(3);
+        } else {
+            return false;
         }
         return true;
     } // end onOptionsItemSelected
 
+    private void changePuzzle(int length) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.change_puzzle_warning)
+            .setPositiveButton(R.string.yes, (dialog, which) -> {
+                mHist.clear(length);
+                mPuzzleManager.initPuzzle(MagicCube.DEFAULT_PUZZLE, "" + length, new ProgressView(), new Graphics.Label(), false);
+                reset();
+            })
+            .setNegativeButton(R.string.no, (dialog, which) -> {
+            });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
     private void solve() {
         mScrambleState = ScrambleState.NONE; // User doesn't get credit for this solve.
-        Stack<MagicCube.TwistData> toundo = new Stack<MagicCube.TwistData>();
+        Stack<MagicCube.TwistData> toundo = new Stack<>();
         for(Enumeration<MagicCube.TwistData> moves = mHist.moves(); moves.hasMoreElements();)
             toundo.push(moves.nextElement());
         while(!toundo.isEmpty()) {
@@ -334,7 +340,7 @@ public class MC4DAndroid extends Activity {
         }
     } // end writeLog()
 
-    private boolean readLog(File logfile) {
+    private boolean readAndApplyLog(File logfile) {
         if( ! logfile.exists())
             return false;
         try {
@@ -383,15 +389,15 @@ public class MC4DAndroid extends Activity {
             return false;
         }
         return true;
-    } // end readLog()
+    } // end readAndApplyLog()
 
     private boolean sendLog(File logfile) {
-        if (!logfile.exists())
+        if(!logfile.exists())
             return false;
         String text = "";
         try {
             text = new Scanner(logfile).useDelimiter("\\A").next();
-        } catch (FileNotFoundException e) {
+        } catch(FileNotFoundException e) {
             e.printStackTrace();
         }
         EmailUtils.sendEmail(null, "MagicCube4D log file", text, this);

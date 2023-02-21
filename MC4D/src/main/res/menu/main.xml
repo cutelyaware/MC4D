@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:title="@string/puzzle">
+        <menu>
+            <item
+                android:title="@string/_2_4"
+                android:id="@+id/itemPuzzle2222" />
+            <item
+                android:title="@string/_3_4"
+                android:id="@+id/itemPuzzle3333" />
+        </menu>
+    </item>
+    <item android:title="@string/scramble">
+        <menu>
+            <item
+                android:title="@string/scramble_1"
+                android:id="@+id/itemScramble1" />
+            <item
+                android:title="@string/scramble_2"
+                android:id="@+id/itemScramble2" />
+            <item
+                android:title="@string/scramble_3"
+                android:id="@+id/itemScramble3" />
+            <item
+                android:title="@string/scramble_fully"
+                android:id="@+id/itemScrambleFull" />
+        </menu>
+    </item>
+    <item
+        android:title="@string/solve"
+        android:id="@+id/itemSolve" />
+    <item
+        android:title="@string/send_log"
+        android:id="@+id/itemSendLog" />
+    <item
+        android:title="@string/about"
+        android:id="@+id/itemAbout"
+        android:icon="@android:drawable/ic_menu_info_details" />
+</menu>
